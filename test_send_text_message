@@ -1,2 +1,0 @@
-class TestSendTextMessage(unittest.TestCase):
-    """ This class contains test which will send message to provided Phone Number."""
