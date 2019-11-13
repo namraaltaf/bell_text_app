@@ -23,6 +23,7 @@ Note: If Python3 is already installed on your system, skip this ```2``` step.
 3: chromedriver (To install chromedriver, follow ```7``` step mentioned below.)
 
 
+
 Now follow these steps:
 
 1: Open cmd/terminal in your computer.
@@ -36,7 +37,7 @@ Now follow these steps:
 - Run ```cd bell_text_app``` command.
 
 5: Create Virtual environment.
-- Run ```pip install virtualenv'``` to install virtual environments.
+- Run ```pip install virtualenv``` to install virtual environments.
 - To create virtual environment with python 3, run ```virtualenv -p python belltextenv```
 - To start virtual environment, run ```belltextenv\Scripts\activate```
 
@@ -47,6 +48,7 @@ Now follow these steps:
 7: Skip this step if you have Chrome Browser version 78.0.3904.70.
 (If Chrome Browser version is different than the 78.0.3904.70 version, you need to download chromedriver version
 compatible to your Chrome Browser.)
+
 Note: This project folder already has chromedriver version compatible to Chrome Browser version 78.0.3904.70
 
 To install chrome driver follow these steps:
@@ -66,12 +68,12 @@ your browser version.
 - Replace ```phone_numbers.csv``` file with new ```phone_numbers.csv``` file.
 (Current file contains dummy data for Phone Numbers)
 
-8: If you have large number of data then
+10: If you have large number of data then
 - Open ```config.py``` file in notepad appearing under this ```bell_text_app``` folder.
 - Replace 5 with 10.
 - Save the file.
 
-9: Run Script
+11: Run Script
 - Run ```nosetests test_send_text_message.py``` command. (# This will run the script)
 
 
@@ -83,10 +85,17 @@ To run test in future, first access project folder by following these steps:
 - Replace ```phone_numbers.csv``` file with new ```phone_numbers.csv``` file. (# when you need to add new Phone Numbers)
 - Now open terminal/cmd
 - Execute ```cd Documents``` command.
-Note: if project is under another directory, add name of that directory instead of Documents.
+(# Note: if project is under another directory, add name of that directory instead of Documents.)
 - Execute ```cd bell_text_app``` command.
 - Execute ```belltextenv\Scripts\activate``` command
 - Execute ```nosetests test_send_text_message.py``` command. (# This will run the script)
+
+## Check Results
+
+Once script run, to check results:
+- Open project folder under Documents/other directory where it exists.
+- Open ```messages_success_status...``` file in notepad to see for which phone numbers, message have been sent successfully.
+- Open ```messages_errors_status...``` file in notepad to see for which phone numbers, message have not been sent.
 
 ## Guidelines
 
