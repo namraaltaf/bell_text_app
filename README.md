@@ -94,8 +94,8 @@ To run test in future, first access project folder by following these steps:
 
 Once script run, to check results:
 - Open project folder under Documents/other directory where it exists.
-- Open ```messages_success_status...``` file in notepad to see for which phone numbers, message have been sent successfully.
-- Open ```messages_errors_status...``` file in notepad to see for which phone numbers, message have not been sent.
+- Open ```messages_success_status...``` file in notepad to see for which phone numbers, messages have been sent successfully.
+- Open ```messages_errors_status...``` file in notepad to see for which phone numbers, messages have not been sent.
 
 ## Guidelines
 
