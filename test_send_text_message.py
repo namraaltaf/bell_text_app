@@ -21,9 +21,10 @@ from config import THREADS
 from settings import driver_path
 
 
-logger = logging.getLogger('spam_application')
+logger = logging.getLogger('application_failed_to_run')
 errors = []
 success = []
+
 
 class TestSendTextMessage(unittest.TestCase):
     """ This class contains test which will send message to provided Phone Number."""
@@ -44,12 +45,12 @@ class TestSendTextMessage(unittest.TestCase):
 
             with multiprocessing.Pool(THREADS) as thread_pool:
                 try:
-                    TestSendTextMessage.data = thread_pool.map(TestSendTextMessage.enter_and_submit_phone_numbers_data, numbers_list)
+                    TestSendTextMessage.data = thread_pool.map(TestSendTextMessage.enter_and_submit_phone_numbers_data,
+                                                               numbers_list)
                     thread_pool.close()
                     thread_pool.join()
                 except Exception:
                     logger.error("Fatal error in main loop", exc_info=True)
-
         except Exception as ex:
             print(ex)
         finally:
@@ -111,10 +112,9 @@ class TestSendTextMessage(unittest.TestCase):
 
             resp_id = cls.solve_captcha()
             captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
-            while captcha_response_token == '' and cls.retrieve_captcha_attempt < 12:
+            while captcha_response_token == '' and cls.retrieve_captcha_attempt < 5:
                 captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
                 cls.retrieve_captcha_attempt = cls.retrieve_captcha_attempt + 1
-                print(cls.retrieve_captcha_attempt)
 
             if captcha_response_token:
                 cls.driver.execute_script("document.getElementById('g-recaptcha-response').style.removeProperty('display');")
@@ -177,9 +177,9 @@ class TestSendTextMessage(unittest.TestCase):
             cls.driver.quit()
 
             if success:
-                return {"success":success}
+                return {"success": success}
             elif errors:
-                return {"errors":errors}
+                return {"errors": errors}
 
     @classmethod
     def solve_captcha(cls):

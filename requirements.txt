@@ -2,8 +2,6 @@ certifi==2019.9.11
 chardet==3.0.4
 idna==2.8
 nose==1.3.7
-numpy==1.17.4
-pkg-resources==0.0.0
 requests==2.22.0
 selenium==3.141.0
 spintax==1.0.4
