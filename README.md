@@ -15,7 +15,7 @@ Before you start working, you first need to setup your environment. Make sure yo
 - Find ```python 3.6.4``` version in the list and download it.
 - Once downloaded, go to ```Downloads``` folder and install this downloaded file by clicking on it.
 - While running setup, make sure to select ```Add Python3.6 to PATH``` check box appearing at first page.
-- Click on Install now option.
+- Click on ```Install now``` option.
 - Complete setup.
 
 Note: If Python3 is already installed on your system, skip this ```2``` step.
