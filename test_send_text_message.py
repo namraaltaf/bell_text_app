@@ -22,64 +22,66 @@ from settings import driver_path
 
 
 logger = logging.getLogger('spam_application')
+errors = []
+success = []
 
 class TestSendTextMessage(unittest.TestCase):
     """ This class contains test which will send message to provided Phone Number."""
 
-    errors = []
-    success = []
     retrieve_captcha_attempt = 0
     captcha_response_token = ''
+    success_file = ''
+    error_file = ''
+    data = {}
 
     def test_send_text_message(self):
         """ Check messages can be sent to provided phone numbers successfully."""
         try:
             phone_numbers_data = phone_number_data.get_phone_number_data()
             print(phone_numbers_data)
-            print("********************\n")
 
             numbers_list = [phone_numbers_data[x:x + 10] for x in range(0, len(phone_numbers_data), 10)]
-            # list_of_parts = numpy.array_split(phone_numbers_data, 5)
-            print(numbers_list)
-            print(len(numbers_list))
 
-            print("********************\n")
-            print("success")
             with multiprocessing.Pool(THREADS) as thread_pool:
                 try:
-                    thread_pool.map(TestSendTextMessage.enter_and_submit_phone_numbers_data, numbers_list)
+                    TestSendTextMessage.data = thread_pool.map(TestSendTextMessage.enter_and_submit_phone_numbers_data, numbers_list)
                     thread_pool.close()
                     thread_pool.join()
                 except Exception:
                     logger.error("Fatal error in main loop", exc_info=True)
 
-            #cls.enter_and_submit_phone_numbers_data(phone_numbers=phone_numbers_data)
-
         except Exception as ex:
             print(ex)
         finally:
-            print("inside finally")
-            print("_________________________")
-            print(TestSendTextMessage.success)
-            if TestSendTextMessage.success:
+            success_list = []
+            errors_list = []
+
+            if TestSendTextMessage.data:
+                for data_key in TestSendTextMessage.data:
+                    if 'success' in data_key:
+                        for success_key in data_key['success']:
+                            success_list.append(success_key)
+                    elif 'errors' in data_key:
+                        for errors_key in data_key['errors']:
+                            errors_list.append(errors_key)
+
+            if success_list:
                 success_file = "messages_success_status_{date}.txt".format(
                     date=datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
-                file = open(success_file,'w')
-                file.write('Messages are sent successfully to following Phone Numbers:\n')
-                for success_key in TestSendTextMessage.success:
-                    file.write("{success}\n".format(success=success_key))
-                file.close()
+                success_file_handler = open(success_file, 'w')
+                success_file_handler.write('Messages are sent successfully to following Phone Numbers:\n')
+                for success_key in success_list:
+                    success_file_handler.write("{success}\n".format(success=success_key))
+                success_file_handler.close()
 
-            print(")))))))))))))))))))))))")
-            print(TestSendTextMessage.errors)
-            if TestSendTextMessage.errors:
+            if errors_list:
                 error_file = "messages_errors_status_{date}.txt".format(
                     date=datetime.datetime.now().strftime("%Y%m%d_%H%M%S"))
-                file = open(error_file, "w")
-                file.write('Messages sending failed to following Phone Numbers:\n')
-                for error_key in TestSendTextMessage.errors:
-                    file.write("{error}\n".format(error=error_key))
-                file.close()
+                error_file_handler = open(error_file, "w")
+                error_file_handler.write('Messages sending failed to following Phone Numbers:\n')
+                for error_key in errors_list:
+                    error_file_handler.write("{error}\n".format(error=error_key))
+                error_file_handler.close()
 
     @classmethod
     def enter_and_submit_phone_numbers_data(cls, phone_numbers):
@@ -109,14 +111,18 @@ class TestSendTextMessage(unittest.TestCase):
 
             resp_id = cls.solve_captcha()
             captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
-            while captcha_response_token == '':
+            while captcha_response_token == '' and cls.retrieve_captcha_attempt < 12:
                 captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
-                cls.retrieve_captcha_attempt += 1
+                cls.retrieve_captcha_attempt = cls.retrieve_captcha_attempt + 1
+                print(cls.retrieve_captcha_attempt)
 
-            cls.driver.execute_script("document.getElementById('g-recaptcha-response').style.removeProperty('display');")
-            captcha_response_field = cls.driver.find_element_by_css_selector('#g-recaptcha-response')
-            captcha_response_field.clear()
-            captcha_response_field.send_keys(captcha_response_token)
+            if captcha_response_token:
+                cls.driver.execute_script("document.getElementById('g-recaptcha-response').style.removeProperty('display');")
+                captcha_response_field = cls.driver.find_element_by_css_selector('#g-recaptcha-response')
+                captcha_response_field.clear()
+                captcha_response_field.send_keys(captcha_response_token)
+            else:
+                print("Did not get Captcha solved response from 2Captcha Server so leaving this chunks of Phone Numbers")
 
             submit_button = cls.driver.find_element_by_css_selector('[type="submit"]')
             submit_button.click()
@@ -134,46 +140,46 @@ class TestSendTextMessage(unittest.TestCase):
 
                 if "message(s) successfully sent" in message_sent_status:
                     for phone_number_key in numbers:
-                        cls.success.append(phone_number_key)
-                        print(cls.success)
+                        success.append(phone_number_key)
                     print("Message sent successfully to these phone numbers: ", phone_number_string)
+
             except:
                 incorrect_numbers = []
                 error_contains_phone_number = False
 
-                visibility = WebDriverWait(cls.driver, ELEMENT_WAIT_TIME).until(
+                WebDriverWait(cls.driver, ELEMENT_WAIT_TIME).until(
                     EC.visibility_of_element_located((By.CSS_SELECTOR, '.messages li'))
                 )
-                print("visibility: ", str(visibility))
                 message_failure_status = cls.driver.find_elements_by_css_selector('.messages li')
-                print(len(message_failure_status))
-                print(message_failure_status)
 
                 for error_key in message_failure_status:
-                    print(error_key.text)
                     error_contains_phone_number = any(char.isdigit() for char in error_key.text)
-                    print("inside except clause")
-                    print(error_contains_phone_number)
 
                     if error_contains_phone_number:
                         error_text = error_key.text.split()
                         incorrect_numbers.append(error_text[0])
-                        cls.errors.append(error_text[0])
+                        errors.append(error_text[0])
 
                 if not error_contains_phone_number:
                     for num_key in numbers:
-                        cls.errors.append(num_key)
+                        errors.append(num_key)
 
                 if error_contains_phone_number and len(incorrect_numbers) != len(numbers):
                     for num_key in numbers:
                         if num_key not in incorrect_numbers:
-                            cls.success.append(num_key)
-                print("cls.errors: " , str(cls.errors))
+                            success.append(num_key)
 
                 if error_contains_phone_number:
                     print("messages sending failed to these phone numbers: ", ",".join(incorrect_numbers))
                 else:
                     print("messages sending failed to these phone numbers: ", ",".join(numbers))
+
+            cls.driver.quit()
+
+            if success:
+                return {"success":success}
+            elif errors:
+                return {"errors":errors}
 
     @classmethod
     def solve_captcha(cls):
@@ -208,8 +214,3 @@ class TestSendTextMessage(unittest.TestCase):
                 print(e)
 
         return cls.captcha_response_token
-
-
-    # def tearDown(cls):
-    #     """ Quit driver."""
-    #     cls.driver.quit()
