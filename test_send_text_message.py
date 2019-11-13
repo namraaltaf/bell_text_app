@@ -7,6 +7,7 @@ import logging
 import multiprocessing
 
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
@@ -21,10 +22,8 @@ from config import THREADS
 from settings import driver_path
 
 
-logger = logging.getLogger('application_failed_to_run')
 errors = []
 success = []
-
 
 class TestSendTextMessage(unittest.TestCase):
     """ This class contains test which will send message to provided Phone Number."""
@@ -49,8 +48,8 @@ class TestSendTextMessage(unittest.TestCase):
                                                                numbers_list)
                     thread_pool.close()
                     thread_pool.join()
-                except Exception:
-                    logger.error("Fatal error in main loop", exc_info=True)
+                except Exception as ex:
+                    print(ex)
         except Exception as ex:
             print(ex)
         finally:
@@ -88,7 +87,12 @@ class TestSendTextMessage(unittest.TestCase):
     def enter_and_submit_phone_numbers_data(cls, phone_numbers):
         """ Enter data in text fields appearing on form and submit data."""
         print("inside function")
-        cls.driver = webdriver.Chrome(driver_path)
+        chrome_options = Options()
+        chrome_options.add_argument("--disable-extensions")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--log-level=3")
+        cls.driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
         cls.driver.get(PAGE_URL)
 
         for i in range(0, len(phone_numbers), 10):

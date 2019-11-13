@@ -38,7 +38,7 @@ Now follow these steps:
 5: Create Virtual environment.
 - Run ```pip install virtualenv'``` to install virtual environments.
 - To create virtual environment with python 3, run ```virtualenv -p python belltextenv```
-- To start virtual environment, run ```belltextenv/bin/activate```
+- To start virtual environment, run ```belltextenv\Scripts\activate```
 
 6: Install Requirements.
 - Run ```pip3 install -r reqs/requirements.txt``` command.
@@ -85,8 +85,8 @@ To run test in future, first access project folder by following these steps:
 - Execute ```cd Documents``` command.
 Note: if project is under another directory, add name of that directory instead of Documents.
 - Execute ```cd bell_text_app``` command.
-- Execute ```belltextenv/bin/activate``` command
-- Execute ```nosetests test_generate_code.py``` command. (# This will run the script)
+- Execute ```belltextenv\Scripts\activate``` command
+- Execute ```nosetests test_send_text_message.py``` command. (# This will run the script)
 
 ## Guidelines
 
