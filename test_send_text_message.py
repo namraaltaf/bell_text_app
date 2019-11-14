@@ -92,7 +92,6 @@ class TestSendTextMessage(unittest.TestCase):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--log-level=3")
         cls.driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
-        cls.driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
         cls.driver.get(PAGE_URL)
 
         for i in range(0, len(phone_numbers), 10):
