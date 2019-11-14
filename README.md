@@ -22,6 +22,8 @@ Note: If Python3 is already installed on your system, skip this ```2``` step.
 
 3: chromedriver (To install chromedriver, follow ```7``` step mentioned below.)
 
+4. Git (To install Git, click on ```https://www.toolsqa.com/git/install-git-on-windows/``` and follow all instructions.)
+
 
 
 Now follow these steps:
@@ -87,6 +89,7 @@ To run test in future, first access project folder by following these steps:
 - Execute ```cd Documents``` command.
 (# Note: if project is under another directory, add name of that directory instead of Documents.)
 - Execute ```cd bell_text_app``` command.
+- Execute git pull command (# run only when new changes/updates are pushed in script)
 - Execute ```belltextenv\Scripts\activate``` command
 - Execute ```nosetests test_send_text_message.py``` command. (# This will run the script)
 
@@ -96,6 +99,20 @@ Once script run, to check results:
 - Open project folder under Documents/other directory where it exists.
 - Open ```messages_success_status...``` file in notepad to see for which phone numbers, messages have been sent successfully.
 - Open ```messages_errors_status...``` file in notepad to see for which phone numbers, messages have not been sent.
+
+## Text Message
+
+If you need to change the text message, follow these steps:
+- Open project folder under Documents/other directory where it exists.
+- Open ```message.py``` file in notepad.
+- For text, make following changes:
+-- If you want to change spin text, add/update it inside ```{}```.
+-- Currently, ```{Hello|Hi}``` is written. If you want to add additional text let's suppose text is ```Hey```, add like
+this ```{Hello|Hi|Hey}```.
+--- And if you want to update already written text, do like ```{Hey|Hi}```.
+(# Text which you want to spin should inside ```{}``` and have ```|``` (pipe) sign.)
+--- If you want to change static text, just change ```how are you``` text.
+Note: Text should always inside double quotes.
 
 ## Guidelines
 
