@@ -105,7 +105,9 @@ Once script run, to check results:
 If you need to change the text message, follow these steps:
 - Open project folder under Documents/other directory where it exists.
 - Open ```message.py``` file in notepad.
-- For text, make following changes:
+
+For text, make following changes:
+
 - If you want to change spin text, add/update it inside ```{}```.
 - Currently, ```{Hello|Hi}``` is written. If you want to add additional text let's suppose text is ```Hey```, add like
 this ```{Hello|Hi|Hey}```.
