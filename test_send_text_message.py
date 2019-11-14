@@ -3,7 +3,6 @@ import unittest
 import spintax
 import requests
 import datetime
-import logging
 import multiprocessing
 
 from selenium import webdriver
@@ -15,6 +14,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from constants import (GOOGLE_KEY, REQUEST_API_URL, RESPONSE_API_URL,
                        PAGE_URL, API_KEY, TIME_OUT_LIMIT, INITIAL_WAIT_TIME,
                        SHORT_WAIT_TIME, ELEMENT_WAIT_TIME)
+
+from message import message_text
 
 from csv_file_operator.phone_numbers_csv_operator import phone_number_data
 
@@ -38,7 +39,6 @@ class TestSendTextMessage(unittest.TestCase):
         """ Check messages can be sent to provided phone numbers successfully."""
         try:
             phone_numbers_data = phone_number_data.get_phone_number_data()
-            print(phone_numbers_data)
 
             numbers_list = [phone_numbers_data[x:x + 10] for x in range(0, len(phone_numbers_data), 10)]
 
@@ -86,12 +86,12 @@ class TestSendTextMessage(unittest.TestCase):
     @classmethod
     def enter_and_submit_phone_numbers_data(cls, phone_numbers):
         """ Enter data in text fields appearing on form and submit data."""
-        print("inside function")
         chrome_options = Options()
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--log-level=3")
+        cls.driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
         cls.driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
         cls.driver.get(PAGE_URL)
 
@@ -112,7 +112,7 @@ class TestSendTextMessage(unittest.TestCase):
             message_field.clear()
 
             send_to_field.send_keys(phone_number_string)
-            message_field.send_keys(spintax.spin("{Hello|Hi}, how are you?"))
+            message_field.send_keys(spintax.spin(message_text))
 
             resp_id = cls.solve_captcha()
             captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
