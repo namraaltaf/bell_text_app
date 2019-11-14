@@ -42,8 +42,8 @@ Now follow these steps:
 - To start virtual environment, run ```belltextenv\Scripts\activate```
 
 6: Install Requirements.
-- Run ```pip3 install -r reqs/requirements.txt``` command.
-(If it gives error, run ```pip install -r reqs/requirements.txt``` command)
+- Run ```pip3 install -r requirements.txt``` command.
+(If it gives error, run ```pip install -r requirements.txt``` command)
 
 7: Skip this step if you have Chrome Browser version 78.0.3904.70.
 (If Chrome Browser version is different than the 78.0.3904.70 version, you need to download chromedriver version
