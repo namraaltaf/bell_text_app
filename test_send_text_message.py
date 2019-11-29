@@ -26,6 +26,7 @@ from settings import driver_path
 errors = []
 success = []
 
+
 class TestSendTextMessage(unittest.TestCase):
     """ This class contains test which will send message to provided Phone Number."""
 
@@ -91,7 +92,7 @@ class TestSendTextMessage(unittest.TestCase):
         chrome_options.add_argument("--disable-gpu")
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--log-level=3")
-        cls.driver = webdriver.Chrome(executable_path=driver_path, chrome_options=chrome_options)
+        cls.driver = webdriver.Chrome(executable_path=driver_path, options=chrome_options)
         cls.driver.get(PAGE_URL)
 
         for i in range(0, len(phone_numbers), 10):
@@ -114,16 +115,16 @@ class TestSendTextMessage(unittest.TestCase):
             message_field.send_keys(spintax.spin(message_text))
 
             resp_id = cls.solve_captcha()
-            captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
-            while captcha_response_token == '' and cls.retrieve_captcha_attempt < 5:
-                captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
+            cls.captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
+            while cls.captcha_response_token == '' and cls.retrieve_captcha_attempt < 5:
+                cls.captcha_response_token = cls.get_captcha_token(resp_id=resp_id)
                 cls.retrieve_captcha_attempt = cls.retrieve_captcha_attempt + 1
 
-            if captcha_response_token:
+            if cls.captcha_response_token:
                 cls.driver.execute_script("document.getElementById('g-recaptcha-response').style.removeProperty('display');")
                 captcha_response_field = cls.driver.find_element_by_css_selector('#g-recaptcha-response')
                 captcha_response_field.clear()
-                captcha_response_field.send_keys(captcha_response_token)
+                captcha_response_field.send_keys(cls.captcha_response_token)
             else:
                 print("Did not get Captcha solved response from 2Captcha Server so leaving this chunks of Phone Numbers")
 
