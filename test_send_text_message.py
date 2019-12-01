@@ -1,4 +1,5 @@
 import time
+import random
 import unittest
 import spintax
 import requests
@@ -40,8 +41,10 @@ class TestSendTextMessage(unittest.TestCase):
         """ Check messages can be sent to provided phone numbers successfully."""
         try:
             phone_numbers_data = phone_number_data.get_phone_number_data()
+            list_slicing_range_for_thread = int(len(phone_numbers_data)/THREADS)
 
-            numbers_list = [phone_numbers_data[x:x + 10] for x in range(0, len(phone_numbers_data), 10)]
+            numbers_list = [phone_numbers_data[x:x + list_slicing_range_for_thread]
+                            for x in range(0, len(phone_numbers_data), list_slicing_range_for_thread)]
 
             with multiprocessing.Pool(THREADS) as thread_pool:
                 try:
@@ -84,24 +87,34 @@ class TestSendTextMessage(unittest.TestCase):
                     error_file_handler.write("{error}\n".format(error=error_key))
                 error_file_handler.close()
 
+            print("\n*********** ALL DONE ***********")
+
     @classmethod
     def enter_and_submit_phone_numbers_data(cls, phone_numbers):
         """ Enter data in text fields appearing on form and submit data."""
-        chrome_options = Options()
-        chrome_options.add_argument("--disable-extensions")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--log-level=3")
-        cls.driver = webdriver.Chrome(executable_path=driver_path, options=chrome_options)
-        cls.driver.get(PAGE_URL)
+        list_chunk_range = 0
+        while list_chunk_range < len(phone_numbers):
+            slicing_range = random.randint(6, 10)
 
-        for i in range(0, len(phone_numbers), 10):
+            chrome_options = Options()
+            chrome_options.add_argument("--disable-extensions")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--log-level=3")
+            cls.driver = webdriver.Chrome(executable_path=driver_path, options=chrome_options)
+            cls.driver.get(PAGE_URL)
+
             numbers = []
-            for phone_number_key in phone_numbers[i:i+10]:
+            for phone_number_key in phone_numbers[list_chunk_range:list_chunk_range+slicing_range]:
                 numbers.append(phone_number_key['phone_number'])
 
             phone_number_string = ','.join(numbers)
-            print("\n****************** Chunk of Phone numbers are: ********************\n", phone_number_string)
+            if len(numbers) == slicing_range:
+                print(f"\n************* Chunk of {slicing_range} Phone numbers are:  *************\n"
+                      f"{phone_number_string}\n")
+            else:
+                print(f"\n************* Chunk of remaining Phone number(s) are:  *************\n"
+                      f"{phone_number_string}\n")
 
             WebDriverWait(cls.driver, ELEMENT_WAIT_TIME).until(
                 EC.visibility_of_element_located((By.CSS_SELECTOR, '[type="submit"]'))
@@ -179,11 +192,12 @@ class TestSendTextMessage(unittest.TestCase):
                     print("messages sending failed to these phone numbers: ", ",".join(numbers))
 
             cls.driver.quit()
+            list_chunk_range = list_chunk_range + slicing_range
 
-            if success:
-                return {"success": success}
-            elif errors:
-                return {"errors": errors}
+        if success:
+            return {"success": success}
+        elif errors:
+            return {"errors": errors}
 
     @classmethod
     def solve_captcha(cls):
