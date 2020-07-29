@@ -5,10 +5,13 @@
 
 Welcome to Bell Text App's documentation!
 =========================================
+Release v\ |version|
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+
+   bell_text_app
+
 
 
 
