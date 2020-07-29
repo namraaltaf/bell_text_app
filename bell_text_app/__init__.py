@@ -1,0 +1,1 @@
+from bell_text_app import __about__
