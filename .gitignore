@@ -112,3 +112,5 @@ venv.bak/
 .idea/workspace.xml
 .idea/bold-recurring-app.iml
 .idea/misc.xml
+
+bell_text_app/docs/_build
